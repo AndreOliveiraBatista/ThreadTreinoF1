@@ -3,42 +3,20 @@ package controller;
 import java.util.concurrent.Semaphore;
 
 public class ThreadCorrida extends Thread {
-	private int carro;
+	private int IdCarro;
 	private Semaphore semaforo;
 	private Semaphore mutex;
+	private static String[] escuderias = {" McLaren ", " Mercedes ", " Red Bull ", " Williams ", " ferrari ", " Aston Martin ", " Sauber " };
 
 	public ThreadCorrida(int IdCarro, Semaphore semaforo, Semaphore mutex) {
-		this.carro = IdCarro;
+		this.IdCarro = IdCarro;
 		this.semaforo = semaforo;
 		this.mutex = mutex;
 	}
 
 	@Override
 	public void run() {
-		String[] escuderias = { " McLaren ", " Mercedes ", " Red Bull ", " Williams ", " ferrari ", " Aston Martin ",
-				" Sauber " };
-
-		for (int carro = 1; carro < 2; carro++) {
-			for (int i = 0; i < escuderias.length; i++) {
-				try {
-//----------------<<início da seção crítica: 2 carros da mesma escuderia>>------------------------					
-					if (carro == 2) {
-						mutex.acquire();
-					}
-//----------------<<Inicio da seção crítica: apenas 5 carros na corrida>>-------------------------
-					semaforo.acquire();
-
-					double tempo = corrida(escuderias[i], carro);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} finally {
-					semaforo.release();
-//-----------------<<Fim da seção crítica: apenas 5 carros na corrida>>-----------------------------
-					mutex.release();
-//----------------<<fim da seção crítica: 2 carros da mesma escuderia>>-----------------------------
-				}
-			}
-		}
+		double tempo = corrida(escuderias[i], IdCarro);
 	}
 
 	private double corrida(String escuderia, int idCarro) {
